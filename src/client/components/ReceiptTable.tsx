@@ -103,7 +103,7 @@ export function ReceiptTable() {
 
   const rows = receipt.items.map((item, index) => (
     <Table.Tr key={index}>
-      <Table.Td>
+      <Table.Td maw={80}>
         <NumberInput
           size="xs"
           value={item.price}
@@ -112,7 +112,7 @@ export function ReceiptTable() {
           onChange={(value) => handleUpdateItem(index, "price", value || 0)}
         />
       </Table.Td>
-      <Table.Td>
+      <Table.Td maw={80}>
         <NumberInput
           size="xs"
           value={item.discount}
