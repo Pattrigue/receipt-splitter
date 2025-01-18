@@ -12,7 +12,11 @@ import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { Receipt, ReceiptItem } from "../../types";
 
-export function ReceiptTable() {
+interface ReceiptTableProps {
+  onReceiptChange?: (receipt: Receipt) => void;
+}
+
+export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
   const [receipt, setReceipt] = useState<Receipt>({
     items: [
       {
@@ -22,34 +26,41 @@ export function ReceiptTable() {
         buyer: "Begge",
       },
     ],
-    store: "",
-    total: 0,
   });
 
   // Handle adding a new row
   const handleAddRow = () => {
-    setReceipt((prevReceipt) => ({
-      ...prevReceipt,
-      items: [
-        ...prevReceipt.items,
-        {
-          name: "",
-          price: 0,
-          discount: 0,
-          buyer: "Begge",
-        },
-      ],
-    }));
+    setReceipt((prevReceipt) => {
+      const updatedReceipt = {
+        ...prevReceipt,
+        items: [
+          ...prevReceipt.items,
+          {
+            name: "",
+            price: 0,
+            discount: 0,
+            buyer: "Begge",
+          },
+        ],
+      };
+      onReceiptChange?.(updatedReceipt);
+
+      return updatedReceipt;
+    });
   };
 
   const handleRemoveRow = (index: number) => {
-    setReceipt((prevReceipt) => ({
-      ...prevReceipt,
-      items: prevReceipt.items.filter((_, i) => i !== index),
-    }));
+    setReceipt((prevReceipt) => {
+      const updatedReceipt = {
+        ...prevReceipt,
+        items: prevReceipt.items.filter((_, i) => i !== index),
+      };
+      onReceiptChange?.(updatedReceipt);
+
+      return updatedReceipt;
+    });
   };
 
-  // Handle updating a specific field in an item
   const handleUpdateItem = (
     index: number,
     field: keyof ReceiptItem,
@@ -61,10 +72,14 @@ export function ReceiptTable() {
         ...updatedItems[index],
         [field]: value,
       };
-      return {
+
+      const updatedReceipt = {
         ...prevReceipt,
         items: updatedItems,
       };
+      onReceiptChange?.(updatedReceipt);
+
+      return updatedReceipt;
     });
   };
 
@@ -162,23 +177,14 @@ export function ReceiptTable() {
             <Table.Th>Rabat</Table.Th>
             <Table.Th>Total</Table.Th>
             <Table.Th>Køber</Table.Th>
-            <Table.Th />
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {rows}
-          <Table.Tr>
-            <Table.Td />
-            <Table.Td />
-            <Table.Td />
-            <Table.Td />
-            <Table.Td>
+            <Table.Th>
               <ActionIcon onClick={handleAddRow} variant="light" size="xs">
                 <IconPlus size={14} />
               </ActionIcon>
-            </Table.Td>
+            </Table.Th>
           </Table.Tr>
-        </Table.Tbody>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
       </Table>
 
       <Divider />

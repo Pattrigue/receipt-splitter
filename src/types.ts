@@ -1,7 +1,5 @@
 export interface Receipt {
-  store: string;
   items: ReceiptItem[];
-  total: number;
 }
 
 export interface ReceiptItem {
