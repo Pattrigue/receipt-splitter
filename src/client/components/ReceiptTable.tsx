@@ -108,6 +108,7 @@ export function ReceiptTable() {
           size="xs"
           value={item.price}
           allowNegative={false}
+          allowLeadingZeros={false}
           decimalSeparator=","
           onChange={(value) => handleUpdateItem(index, "price", value || 0)}
         />
@@ -117,6 +118,7 @@ export function ReceiptTable() {
           size="xs"
           value={item.discount}
           allowNegative={false}
+          allowLeadingZeros={false}
           decimalSeparator=","
           onChange={(value) => handleUpdateItem(index, "discount", value || 0)}
         />
