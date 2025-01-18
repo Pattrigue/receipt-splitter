@@ -4,8 +4,9 @@ import ViteExpress from "vite-express";
 
 dotenv.config();
 
+const port = parseInt(process.env.PORT || "3000", 10);
 const app = express();
 
-ViteExpress.listen(app, 3000, () => {
+ViteExpress.listen(app, port, () => {
   console.log("Server is listening on port 3000...");
 });
