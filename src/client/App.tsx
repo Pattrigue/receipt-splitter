@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Receipt } from "../types";
 
 export function App() {
-  const [itemCount, setItemCount] = useState(0);
+  const [itemCount, setItemCount] = useState(1);
 
   const onReceiptChange = (receipt: Receipt) => {
     setItemCount(receipt.items.length);
