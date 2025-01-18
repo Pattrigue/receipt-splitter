@@ -110,7 +110,7 @@ export function ReceiptTable() {
           allowNegative={false}
           allowLeadingZeros={false}
           decimalSeparator=","
-          onChange={(value) => handleUpdateItem(index, "price", value || 0)}
+          onChange={(value) => handleUpdateItem(index, "price", value || "")}
         />
       </Table.Td>
       <Table.Td maw={80}>
@@ -120,7 +120,7 @@ export function ReceiptTable() {
           allowNegative={false}
           allowLeadingZeros={false}
           decimalSeparator=","
-          onChange={(value) => handleUpdateItem(index, "discount", value || 0)}
+          onChange={(value) => handleUpdateItem(index, "discount", value || "")}
         />
       </Table.Td>
       <Table.Td>
