@@ -9,8 +9,10 @@ import {
   Text,
 } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
+import { act, useState } from "react";
 import { Receipt, ReceiptItem } from "../../types";
+
+const ACTION_COL_WIDTH = 32;
 
 interface ReceiptTableProps {
   onReceiptChange?: (receipt: Receipt) => void;
@@ -155,7 +157,7 @@ export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
           }
         />
       </Table.Td>
-      <Table.Td>
+      <Table.Td w={ACTION_COL_WIDTH}>
         {receipt.items.length > 1 && (
           <ActionIcon
             color="red"
@@ -178,7 +180,7 @@ export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
             <Table.Th>Rabat</Table.Th>
             <Table.Th>Total</Table.Th>
             <Table.Th>Køber</Table.Th>
-            <Table.Th>
+            <Table.Th w={ACTION_COL_WIDTH}>
               <ActionIcon onClick={handleAddRow} variant="light">
                 <IconPlus size={14} />
               </ActionIcon>
