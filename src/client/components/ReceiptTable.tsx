@@ -156,14 +156,16 @@ export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
         />
       </Table.Td>
       <Table.Td>
-        <ActionIcon
-          color="red"
-          onClick={() => handleRemoveRow(index)}
-          variant="light"
-          size="xs"
-        >
-          <IconMinus size={14} />
-        </ActionIcon>
+        {receipt.items.length > 1 && (
+          <ActionIcon
+            color="red"
+            onClick={() => handleRemoveRow(index)}
+            variant="light"
+            size="sm"
+          >
+            <IconMinus size={14} />
+          </ActionIcon>
+        )}
       </Table.Td>
     </Table.Tr>
   ));
@@ -178,7 +180,7 @@ export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
             <Table.Th>Total</Table.Th>
             <Table.Th>Køber</Table.Th>
             <Table.Th>
-              <ActionIcon onClick={handleAddRow} variant="light" size="xs">
+              <ActionIcon onClick={handleAddRow} variant="light" size="sm">
                 <IconPlus size={14} />
               </ActionIcon>
             </Table.Th>
