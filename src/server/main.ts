@@ -8,5 +8,5 @@ const port = parseInt(process.env.PORT || "3000", 10);
 const app = express();
 
 ViteExpress.listen(app, port, () => {
-  console.log("Server is listening on port 3000...");
+  console.log(`Server is listening on port ${port}...`);
 });
