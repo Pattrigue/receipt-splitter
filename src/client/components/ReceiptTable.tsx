@@ -143,7 +143,7 @@ export function ReceiptTable() {
           color="red"
           onClick={() => handleRemoveRow(index)}
           variant="light"
-          size="md"
+          size="xs"
         >
           <IconMinus size={14} />
         </ActionIcon>
@@ -153,7 +153,7 @@ export function ReceiptTable() {
 
   return (
     <Stack gap={0}>
-      <Table>
+      <Table horizontalSpacing={6}>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Pris</Table.Th>
@@ -171,7 +171,7 @@ export function ReceiptTable() {
             <Table.Td />
             <Table.Td />
             <Table.Td>
-              <ActionIcon onClick={handleAddRow} variant="light">
+              <ActionIcon onClick={handleAddRow} variant="light" size="xs">
                 <IconPlus size={14} />
               </ActionIcon>
             </Table.Td>

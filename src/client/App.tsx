@@ -7,7 +7,7 @@ export function App() {
   const [response, setResponse] = useState<Receipt | null>(null);
 
   return (
-    <Box w="100%" p="sm">
+    <Box w="100%" p="xs">
       <Stack>
         <Center>
           <Title order={2}>Receipt Splitter</Title>
