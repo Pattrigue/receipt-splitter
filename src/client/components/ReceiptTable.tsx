@@ -1,14 +1,12 @@
 import {
   ActionIcon,
-  Checkbox,
   Divider,
   Group,
+  NativeSelect,
   NumberInput,
-  Select,
   Stack,
   Table,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
@@ -127,12 +125,16 @@ export function ReceiptTable() {
         {(item.price - item.discount).toFixed(2).replace(".", ",")}
       </Table.Td>
       <Table.Td>
-        <Select
+        <NativeSelect
           size="xs"
           value={item.buyer}
           data={["Begge", "Marie", "Patrick"]}
-          onChange={(value) =>
-            handleUpdateItem(index, "buyer", value || "Begge")
+          onChange={(event) =>
+            handleUpdateItem(
+              index,
+              "buyer",
+              event.currentTarget.value || "Begge"
+            )
           }
         />
       </Table.Td>
