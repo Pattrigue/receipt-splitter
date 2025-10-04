@@ -96,6 +96,7 @@ export function ReceiptTableRows({
             color="red"
             onClick={() => handleRemoveRow(index)}
             variant="light"
+            tabIndex={-1}
           >
             <IconMinus size={14} />
           </ActionIcon>
