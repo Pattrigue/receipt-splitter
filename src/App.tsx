@@ -1,15 +1,10 @@
 import { Box, Divider, Group, Stack, Title } from "@mantine/core";
 import { ColorSchemeToggle } from "./components/ColorSchemeToggle";
+import { useReceiptContext } from "./components/ReceiptContext";
 import { ReceiptTable } from "./components/ReceiptTable";
-import { useState } from "react";
-import type { Receipt } from "@/types";
 
 export function App() {
-  const [itemCount, setItemCount] = useState(1);
-
-  const onReceiptChange = (receipt: Receipt) => {
-    setItemCount(receipt.items.length);
-  };
+  const { itemCount } = useReceiptContext();
 
   return (
     <Box w="100%" p="xs">
@@ -22,7 +17,7 @@ export function App() {
           <ColorSchemeToggle />
         </Group>
         <Divider />
-        <ReceiptTable onReceiptChange={onReceiptChange} />
+        <ReceiptTable />
       </Stack>
     </Box>
   );

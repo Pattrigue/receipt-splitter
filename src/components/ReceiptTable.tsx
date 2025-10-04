@@ -1,175 +1,54 @@
-import {
-  ActionIcon,
-  Divider,
-  Group,
-  NativeSelect,
-  NumberInput,
-  Stack,
-  Table,
-  Text,
-} from "@mantine/core";
-import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import type { Receipt, ReceiptItem } from "@/types";
+import type { Receipt } from "@/types";
+import { ActionIcon, Divider, Group, Stack, Table, Text } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
+import { useMemo, useState } from "react";
+import { ReceiptTableRows } from "./ReceiptTableRows";
+import { useReceiptContext } from "./ReceiptContext";
+import { useCallback } from "react";
 
 const ACTION_COL_WIDTH = 32;
 
-interface ReceiptTableProps {
-  onReceiptChange?: (receipt: Receipt) => void;
-}
+type Split = { Marie: number; Patrick: number };
 
-export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
-  const [receipt, setReceipt] = useState<Receipt>({
-    items: [
-      {
-        name: "",
-        price: 0,
-        discount: 0,
-        buyer: "Begge",
-      },
-    ],
-  });
+export function ReceiptTable() {
+  const { receipt, setReceipt } = useReceiptContext();
 
-  // Handle adding a new row
-  const handleAddRow = () => {
-    setReceipt((prevReceipt) => {
-      const updatedReceipt = {
-        ...prevReceipt,
-        items: [
-          ...prevReceipt.items,
-          {
-            name: "",
-            price: 0,
-            discount: 0,
-            buyer: "Begge",
-          },
-        ],
-      };
-      onReceiptChange?.(updatedReceipt);
+  const handleAddRow = useCallback(() => {
+    setReceipt((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        { name: "", price: 0, discount: 0, buyer: "Begge" },
+      ],
+    }));
+  }, [setReceipt]);
 
-      return updatedReceipt;
-    });
-  };
+  const { totalPrice, split } = useMemo(() => {
+    let total = 0;
+    const s: Split = { Marie: 0, Patrick: 0 };
 
-  const handleRemoveRow = (index: number) => {
-    setReceipt((prevReceipt) => {
-      const updatedReceipt = {
-        ...prevReceipt,
-        items: prevReceipt.items.filter((_, i) => i !== index),
-      };
-      onReceiptChange?.(updatedReceipt);
-
-      return updatedReceipt;
-    });
-  };
-
-  const handleUpdateItem = (
-    index: number,
-    field: keyof ReceiptItem,
-    value: string | number
-  ) => {
-    setReceipt((prevReceipt) => {
-      const updatedItems = [...prevReceipt.items];
-      updatedItems[index] = {
-        ...updatedItems[index],
-        [field]: value,
-      };
-
-      const updatedReceipt = {
-        ...prevReceipt,
-        items: updatedItems,
-      };
-      onReceiptChange?.(updatedReceipt);
-
-      return updatedReceipt;
-    });
-  };
-
-  const totalPrice = receipt.items.reduce(
-    (acc, item) => acc + item.price - item.discount,
-    0
-  );
-
-  // Calculate how much each person owes
-  const calculateSplit = () => {
-    const split = { Marie: 0, Patrick: 0 };
-
-    receipt.items.forEach((item) => {
+    for (const item of receipt.items) {
       const finalPrice = item.price - item.discount;
+      total += finalPrice;
 
       switch (item.buyer) {
         case "Marie":
-          split.Marie += finalPrice;
+          s.Marie += finalPrice;
           break;
         case "Patrick":
-          split.Patrick += finalPrice;
+          s.Patrick += finalPrice;
           break;
         case "Begge":
-          split.Marie += finalPrice / 2;
-          split.Patrick += finalPrice / 2;
-          break;
-        default:
+          s.Marie += finalPrice / 2;
+          s.Patrick += finalPrice / 2;
           break;
       }
-    });
+    }
 
-    return split;
-  };
+    return { totalPrice: total, split: s };
+  }, [receipt.items]);
 
-  const { Marie, Patrick } = calculateSplit();
-
-  const rows = receipt.items.map((item, index) => (
-    <Table.Tr key={index}>
-      <Table.Td maw={80}>
-        <NumberInput
-          size="xs"
-          value={item.price}
-          allowNegative={false}
-          allowLeadingZeros={false}
-          decimalSeparator=","
-          onChange={(value) => handleUpdateItem(index, "price", value || "")}
-        />
-      </Table.Td>
-      <Table.Td maw={80}>
-        <NumberInput
-          size="xs"
-          value={item.discount}
-          allowNegative={false}
-          allowLeadingZeros={false}
-          decimalSeparator=","
-          onChange={(value) => handleUpdateItem(index, "discount", value || "")}
-        />
-      </Table.Td>
-      <Table.Td>
-        {(item.price - item.discount).toFixed(2).replace(".", ",")}
-      </Table.Td>
-      <Table.Td>
-        <NativeSelect
-          size="xs"
-          value={item.buyer}
-          data={["Begge", "Marie", "Patrick"]}
-          onChange={(event) =>
-            handleUpdateItem(
-              index,
-              "buyer",
-              event.currentTarget.value || "Begge"
-            )
-          }
-        />
-      </Table.Td>
-      <Table.Td w={ACTION_COL_WIDTH}>
-        {receipt.items.length > 1 && (
-          <ActionIcon
-            color="red"
-            onClick={() => handleRemoveRow(index)}
-            variant="light"
-          >
-            <IconMinus size={14} />
-          </ActionIcon>
-        )}
-      </Table.Td>
-    </Table.Tr>
-  ));
+  const { Marie, Patrick } = split;
 
   return (
     <Stack gap={0}>
@@ -187,7 +66,12 @@ export function ReceiptTable({ onReceiptChange }: ReceiptTableProps) {
             </Table.Th>
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
+        <Table.Tbody>
+          <ReceiptTableRows
+            items={receipt.items}
+            actionColWidth={ACTION_COL_WIDTH}
+          />
+        </Table.Tbody>
       </Table>
 
       <Divider />
