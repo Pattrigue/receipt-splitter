@@ -3,6 +3,8 @@ import { useCallback, useState } from "react";
 import type { PropsWithChildren } from "react";
 import type { Receipt } from "@/types";
 
+const ITEMS_INITIAL_COUNT = 20;
+
 type SetReceipt = (value: Receipt | ((prev: Receipt) => Receipt)) => void;
 
 type ReceiptContextValue = {
@@ -19,7 +21,12 @@ const [ReceiptContextProvider, useReceiptContext] =
 
 export function ReceiptProvider({ children }: PropsWithChildren) {
   const [receipt, setReceipt] = useState<Receipt>({
-    items: [{ name: "", price: 0, discount: 0, buyer: "Begge" }],
+    items: Array.from({ length: ITEMS_INITIAL_COUNT }, () => ({
+      name: "",
+      price: 0,
+      discount: 0,
+      buyer: "Begge",
+    })),
   });
 
   const [itemCount, setItemCount] = useState<number>(1);
