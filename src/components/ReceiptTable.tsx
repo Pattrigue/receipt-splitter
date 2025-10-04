@@ -9,8 +9,8 @@ import {
   Text,
 } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { act, useState } from "react";
-import { Receipt, ReceiptItem } from "../../types";
+import { useState } from "react";
+import type { Receipt, ReceiptItem } from "@/types";
 
 const ACTION_COL_WIDTH = 32;
 

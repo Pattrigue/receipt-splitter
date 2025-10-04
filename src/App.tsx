@@ -2,7 +2,7 @@ import { Box, Divider, Group, Stack, Title } from "@mantine/core";
 import { ColorSchemeToggle } from "./components/ColorSchemeToggle";
 import { ReceiptTable } from "./components/ReceiptTable";
 import { useState } from "react";
-import { Receipt } from "../types";
+import type { Receipt } from "@/types";
 
 export function App() {
   const [itemCount, setItemCount] = useState(1);
