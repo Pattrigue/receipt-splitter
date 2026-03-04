@@ -1,5 +1,5 @@
 import type { ReceiptItem } from "@/types";
-import { Table, NumberInput, NativeSelect, ActionIcon } from "@mantine/core";
+import { Table, NumberInput, NativeSelect, ActionIcon, TextInput } from "@mantine/core";
 import { IconMinus } from "@tabler/icons-react";
 import { useReceiptContext } from "../context/ReceiptContext";
 import { useCallback } from "react";
@@ -7,11 +7,13 @@ import { useCallback } from "react";
 interface ReceiptTableRowsProps {
   items: ReceiptItem[];
   actionColWidth: number;
+  showName?: boolean;
 }
 
 export function ReceiptTableRows({
   items,
   actionColWidth,
+  showName
 }: ReceiptTableRowsProps) {
   const { setReceipt, onReceiptChange } = useReceiptContext();
 
@@ -53,6 +55,16 @@ export function ReceiptTableRows({
 
   const rows = items.map((item, index) => (
     <Table.Tr key={index}>
+      {showName && (
+        <Table.Td visibleFrom="sm" maw={80}>
+          <TextInput
+            size="xs"
+            value={item.name}
+            onChange={(e) => handleUpdateItem(index, "name", e.currentTarget.value)}
+          />
+        </Table.Td>
+      )}
+
       <Table.Td maw={80}>
         <NumberInput
           size="xs"

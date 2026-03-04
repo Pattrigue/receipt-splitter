@@ -1,14 +1,18 @@
+import { JsonReceiptImportButton } from "@/components/JsonReceiptImportButton";
+import { ReceiptTableRows } from "@/components/ReceiptTableRows";
 import type { ReceiptItem } from "@/types";
 import { ActionIcon, Group, Stack, Table } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useCallback } from "react";
-import { JsonReceiptImportButton } from "@/components/JsonReceiptImportButton";
 import { useReceiptContext } from "../context/ReceiptContext";
-import { ReceiptTableRows } from "@/components/ReceiptTableRows";
 
 const ACTION_COL_WIDTH = 32;
 
-export function ReceiptTable() {
+interface ReceiptTableProps {
+  showName: boolean;
+}
+
+export function ReceiptTable({ showName }: ReceiptTableProps) {
   const { receipt, setReceipt } = useReceiptContext();
 
   const handleAddRow = useCallback(() => {
@@ -21,34 +25,32 @@ export function ReceiptTable() {
     }));
   }, [setReceipt]);
 
-  const handleImport = useCallback(
-    (items: ReceiptItem[]) => setReceipt({ items }),
-    [setReceipt]
-  );
 
   return (
     <Stack gap={0}>
       <Table horizontalSpacing={6}>
         <Table.Thead>
           <Table.Tr>
+            {showName && <Table.Th visibleFrom="sm">Vare</Table.Th>}
+
             <Table.Th>Pris</Table.Th>
             <Table.Th>Rabat</Table.Th>
             <Table.Th>Total</Table.Th>
             <Table.Th>Køber</Table.Th>
+
             <Table.Th w={ACTION_COL_WIDTH}>
-              <Group gap="xs" justify="flex-end" wrap="nowrap">
-                <JsonReceiptImportButton onImport={handleImport} />
-                <ActionIcon onClick={handleAddRow} variant="light">
-                  <IconPlus size={14} />
-                </ActionIcon>
-              </Group>
+              <ActionIcon onClick={handleAddRow} variant="light">
+                <IconPlus size={14} />
+              </ActionIcon>
             </Table.Th>
           </Table.Tr>
         </Table.Thead>
+
         <Table.Tbody>
           <ReceiptTableRows
             items={receipt.items}
             actionColWidth={ACTION_COL_WIDTH}
+            showName={showName}
           />
         </Table.Tbody>
       </Table>

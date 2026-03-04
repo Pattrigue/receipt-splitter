@@ -1,6 +1,7 @@
 import type { ReceiptItem } from "@/types";
 import { type ImportedReceipt, mapImportedReceiptToItems } from "@/utils/receipt-import";
 import { Button, FileButton } from "@mantine/core";
+import { IconUpload } from "@tabler/icons-react";
 import { useCallback } from "react";
 
 interface JsonReceiptImportButtonProps {
@@ -24,8 +25,8 @@ export function JsonReceiptImportButton({ onImport }: JsonReceiptImportButtonPro
   return (
     <FileButton onChange={(file) => file && handleImportJson(file)} accept="application/json">
       {(props) => (
-        <Button {...props} size="xs" variant="light">
-          Import JSON
+        <Button {...props} size="xs" variant="light" visibleFrom="sm" leftSection={<IconUpload size={16}/>}>
+          Importér JSON
         </Button>
       )}
     </FileButton>
