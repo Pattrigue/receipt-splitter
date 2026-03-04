@@ -1,6 +1,6 @@
+import { useReceiptContext } from "@/context/ReceiptContext";
 import { Group, Text } from "@mantine/core";
 import { useMemo } from "react";
-import { useReceiptContext } from "./ReceiptContext";
 
 type Split = { Marie: number; Patrick: number };
 

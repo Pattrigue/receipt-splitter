@@ -1,11 +1,12 @@
 import "./index.css";
 import "@mantine/core/styles.css";
+import "@mantine/dropzone/styles.css";
 
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { App } from "./App";
+import { App } from "@/App";
 import { MantineProvider } from "@mantine/core";
-import { ReceiptProvider } from "./components/ReceiptContext";
+import { ReceiptProvider } from "@/context/ReceiptContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

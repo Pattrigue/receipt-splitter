@@ -1,6 +1,6 @@
 import { Group, Title } from "@mantine/core";
-import { ColorSchemeToggle } from "./ColorSchemeToggle";
-import { useReceiptContext } from "./ReceiptContext";
+import { useReceiptContext } from "@/context/ReceiptContext";
+import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
 
 export function Header() {
   const { itemCount } = useReceiptContext();

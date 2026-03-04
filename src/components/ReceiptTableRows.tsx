@@ -1,7 +1,7 @@
 import type { ReceiptItem } from "@/types";
 import { Table, NumberInput, NativeSelect, ActionIcon } from "@mantine/core";
 import { IconMinus } from "@tabler/icons-react";
-import { useReceiptContext } from "./ReceiptContext";
+import { useReceiptContext } from "../context/ReceiptContext";
 import { useCallback } from "react";
 
 interface ReceiptTableRowsProps {

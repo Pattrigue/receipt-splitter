@@ -1,8 +1,10 @@
-import { ActionIcon, Stack, Table } from "@mantine/core";
+import type { ReceiptItem } from "@/types";
+import { ActionIcon, Group, Stack, Table } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useCallback } from "react";
-import { useReceiptContext } from "./ReceiptContext";
-import { ReceiptTableRows } from "./ReceiptTableRows";
+import { JsonReceiptImportButton } from "@/components/JsonReceiptImportButton";
+import { useReceiptContext } from "../context/ReceiptContext";
+import { ReceiptTableRows } from "@/components/ReceiptTableRows";
 
 const ACTION_COL_WIDTH = 32;
 
@@ -19,6 +21,11 @@ export function ReceiptTable() {
     }));
   }, [setReceipt]);
 
+  const handleImport = useCallback(
+    (items: ReceiptItem[]) => setReceipt({ items }),
+    [setReceipt]
+  );
+
   return (
     <Stack gap={0}>
       <Table horizontalSpacing={6}>
@@ -29,9 +36,12 @@ export function ReceiptTable() {
             <Table.Th>Total</Table.Th>
             <Table.Th>Køber</Table.Th>
             <Table.Th w={ACTION_COL_WIDTH}>
-              <ActionIcon onClick={handleAddRow} variant="light">
-                <IconPlus size={14} />
-              </ActionIcon>
+              <Group gap="xs" justify="flex-end" wrap="nowrap">
+                <JsonReceiptImportButton onImport={handleImport} />
+                <ActionIcon onClick={handleAddRow} variant="light">
+                  <IconPlus size={14} />
+                </ActionIcon>
+              </Group>
             </Table.Th>
           </Table.Tr>
         </Table.Thead>
