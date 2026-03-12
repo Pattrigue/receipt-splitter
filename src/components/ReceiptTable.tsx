@@ -28,7 +28,7 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
 
   return (
     <Stack gap={0}>
-      <Table horizontalSpacing={6}>
+      <Table horizontalSpacing={6} striped>
         <Table.Thead>
           <Table.Tr>
             {showName && <Table.Th visibleFrom="sm">Vare</Table.Th>}
