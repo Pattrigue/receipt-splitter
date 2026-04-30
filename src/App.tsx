@@ -8,12 +8,12 @@ import { ReceiptTable } from "@/components/ReceiptTable";
 import type { Receipt } from "@/types";
 
 export function App() {
-  const { replaceReceipts } = useReceiptContext();
+  const { addReceipts } = useReceiptContext();
   const [showName, setShowName] = useState(true);
 
   const handleImportReceipts = useCallback(
-    (receipts: Receipt[]) => replaceReceipts(receipts),
-    [replaceReceipts]
+    (receipts: Receipt[]) => addReceipts(receipts),
+    [addReceipts]
   );
 
   return (

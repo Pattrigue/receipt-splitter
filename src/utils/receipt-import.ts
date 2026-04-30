@@ -69,15 +69,13 @@ export function mapImportedReceiptToReceipt(
 }
 
 export async function importReceiptFiles(files: File[]): Promise<Receipt[]> {
-  const receipts = await Promise.all(
+  return Promise.all(
     files.map(async (file, index) => {
       const text = await file.text();
       const parsed = JSON.parse(text) as ImportedReceipt;
       return mapImportedReceiptToReceipt(parsed, file.name, index);
     })
   );
-
-  return receipts.length > 0 ? receipts : [createEmptyReceipt()];
 }
 
 export function calculateTotals(items: ReceiptItem[]): ReceiptTotals {

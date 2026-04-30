@@ -7,8 +7,8 @@ export function Footer() {
   const { activeReceipt, receipts } = useReceiptContext();
 
   const currentTotals = useMemo(
-    () => calculateTotals(activeReceipt.items),
-    [activeReceipt.items]
+    () => calculateTotals(activeReceipt?.items ?? []),
+    [activeReceipt?.items]
   );
   const allTotals = useMemo(
     () => calculateReceiptSetTotals(receipts),

@@ -11,18 +11,17 @@ interface HeaderProps {
 }
 
 export function Header({ showName, onShowNameChange }: HeaderProps) {
-  const { replaceReceipts, itemCount, receipts } = useReceiptContext();
+  const { addReceipts } = useReceiptContext();
 
   const handleImport = useCallback(
-    (nextReceipts: Receipt[]) => replaceReceipts(nextReceipts),
-    [replaceReceipts]
+    (nextReceipts: Receipt[]) => addReceipts(nextReceipts),
+    [addReceipts]
   );
 
   return (
     <Group justify="space-between" h="100%" px="md">
       <Group gap="sm">
-        <Title order={2}>Receipt Splitter</Title>
-        <Title order={5}>({receipts.length} / {itemCount})</Title>
+        <Title order={2}>Kvitteringsdeler 🧾</Title>
       </Group>
 
       <Group gap="xl" wrap="nowrap">
