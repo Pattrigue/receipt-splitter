@@ -47,7 +47,13 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
   return (
     <Stack gap="sm">
       {receipts.length === 0 ? (
-        <Stack align="center" gap="sm" justify="center" mih="calc(100vh - 220px)">
+        <Stack
+          align="center"
+          gap="sm"
+          h="calc(100dvh - var(--app-shell-header-height) - var(--app-shell-footer-height) - var(--app-shell-padding) * 2)"
+          justify="center"
+          mih={0}
+        >
           <Stack align="center" gap={4}>
             <Text fw={600}>Ingen kvitteringer endnu</Text>
             <Text c="dimmed" size="sm" ta="center">
