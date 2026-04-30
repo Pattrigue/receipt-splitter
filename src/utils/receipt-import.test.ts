@@ -8,7 +8,9 @@ import {
 import {
   addEmptyReceipt,
   appendReceipts,
+  removeParticipantFromReceipts,
   removeReceipt,
+  renameParticipantInReceipts,
 } from "@/utils/receipt-state";
 
 describe("receipt import", () => {
@@ -138,11 +140,14 @@ describe("receipt state", () => {
 
 describe("receipt totals", () => {
   it("calculates totals for the current receipt", () => {
-    const totals = calculateTotals([
-      { name: "A", price: 20, discount: 5, buyer: "Marie" },
-      { name: "B", price: 10, discount: 0, buyer: "Patrick" },
-      { name: "C", price: 8, discount: 2, buyer: "Begge" },
-    ]);
+    const totals = calculateTotals(
+      [
+        { name: "A", price: 20, discount: 5, buyer: "Marie" },
+        { name: "B", price: 10, discount: 0, buyer: "Patrick" },
+        { name: "C", price: 8, discount: 2, buyer: "Begge" },
+      ],
+      ["Marie", "Patrick"]
+    );
 
     expect(totals.totalPrice).toBe(31);
     expect(totals.split.Marie).toBe(18);
@@ -150,21 +155,76 @@ describe("receipt totals", () => {
   });
 
   it("calculates totals across all receipts", () => {
-    const totals = calculateReceiptSetTotals([
-      {
-        id: "one",
-        name: "One",
-        items: [{ name: "A", price: 30, discount: 0, buyer: "Begge" }],
-      },
-      {
-        id: "two",
-        name: "Two",
-        items: [{ name: "B", price: 12, discount: 2, buyer: "Patrick" }],
-      },
-    ]);
+    const totals = calculateReceiptSetTotals(
+      [
+        {
+          id: "one",
+          name: "One",
+          items: [{ name: "A", price: 30, discount: 0, buyer: "Begge" }],
+        },
+        {
+          id: "two",
+          name: "Two",
+          items: [{ name: "B", price: 12, discount: 2, buyer: "Patrick" }],
+        },
+      ],
+      ["Marie", "Patrick"]
+    );
 
     expect(totals.totalPrice).toBe(40);
     expect(totals.split.Marie).toBe(15);
     expect(totals.split.Patrick).toBe(25);
+  });
+
+  it("splits shared items across any number of participants", () => {
+    const totals = calculateTotals(
+      [{ name: "A", price: 30, discount: 0, buyer: "Begge" }],
+      ["Asta", "Bo", "Clara"]
+    );
+
+    expect(totals.split).toEqual({ Asta: 10, Bo: 10, Clara: 10 });
+  });
+
+  it("does not create participant split rows when no participants are configured", () => {
+    const totals = calculateTotals(
+      [{ name: "A", price: 30, discount: 0, buyer: "Begge" }],
+      []
+    );
+
+    expect(totals.totalPrice).toBe(30);
+    expect(totals.split).toEqual({});
+  });
+});
+
+describe("participants", () => {
+  it("renames participant buyers across existing receipts", () => {
+    const receipts = renameParticipantInReceipts(
+      [
+        {
+          id: "one",
+          name: "One",
+          items: [{ name: "A", price: 10, discount: 0, buyer: "Marie" }],
+        },
+      ],
+      "Marie",
+      "Asta"
+    );
+
+    expect(receipts[0].items[0].buyer).toBe("Asta");
+  });
+
+  it("moves removed participant buyers to shared", () => {
+    const receipts = removeParticipantFromReceipts(
+      [
+        {
+          id: "one",
+          name: "One",
+          items: [{ name: "A", price: 10, discount: 0, buyer: "Marie" }],
+        },
+      ],
+      "Marie"
+    );
+
+    expect(receipts[0].items[0].buyer).toBe("Begge");
   });
 });

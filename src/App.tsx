@@ -20,7 +20,11 @@ export function App() {
     <>
       <GlobalJsonDropzone onImportReceipts={handleImportReceipts} />
 
-      <AppShell header={{ height: 60 }} footer={{ height: 80 }} padding="md">
+      <AppShell
+        header={{ height: 60 }}
+        footer={{ height: { base: 150, sm: 80 } }}
+        padding="md"
+      >
         <AppShell.Header>
           <Header showName={showName} onShowNameChange={setShowName} />
         </AppShell.Header>

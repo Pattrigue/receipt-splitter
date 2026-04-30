@@ -1,5 +1,8 @@
 import type { Receipt, ReceiptItem } from "@/types";
 
+export const SHARED_BUYER = "Begge";
+export const SHARED_BUYER_LABEL = "Alle";
+
 export type ImportedReceipt = {
   items: Array<{
     name?: string;
@@ -10,10 +13,7 @@ export type ImportedReceipt = {
 
 export type ReceiptTotals = {
   totalPrice: number;
-  split: {
-    Marie: number;
-    Patrick: number;
-  };
+  split: Record<string, number>;
 };
 
 export function createEmptyReceipt(id = "receipt-1", name = "Kvittering 1"): Receipt {
@@ -25,7 +25,7 @@ export function createEmptyReceipt(id = "receipt-1", name = "Kvittering 1"): Rec
         name: "",
         price: 0,
         discount: 0,
-        buyer: "Begge",
+        buyer: SHARED_BUYER,
       },
     ],
   };
@@ -36,7 +36,7 @@ export function mapImportedReceiptToItems(parsed: ImportedReceipt): ReceiptItem[
     name: it.name ?? "",
     price: Number.isFinite(it.price) ? it.price : 0,
     discount: Number.isFinite(it.discount ?? 0) ? Math.abs(it.discount ?? 0) : 0,
-    buyer: "Begge",
+    buyer: SHARED_BUYER,
   }));
 }
 
@@ -78,31 +78,32 @@ export async function importReceiptFiles(files: File[]): Promise<Receipt[]> {
   );
 }
 
-export function calculateTotals(items: ReceiptItem[]): ReceiptTotals {
+export function calculateTotals(items: ReceiptItem[], participants: string[]): ReceiptTotals {
+  const split = Object.fromEntries(participants.map((name) => [name, 0]));
+
   return items.reduce<ReceiptTotals>(
     (totals, item) => {
       const finalPrice = item.price - item.discount;
       totals.totalPrice += finalPrice;
 
-      switch (item.buyer) {
-        case "Marie":
-          totals.split.Marie += finalPrice;
-          break;
-        case "Patrick":
-          totals.split.Patrick += finalPrice;
-          break;
-        case "Begge":
-          totals.split.Marie += finalPrice / 2;
-          totals.split.Patrick += finalPrice / 2;
-          break;
+      if (participants.includes(item.buyer)) {
+        totals.split[item.buyer] += finalPrice;
+      } else if (participants.length > 0) {
+        const sharedPrice = finalPrice / participants.length;
+        for (const participant of participants) {
+          totals.split[participant] += sharedPrice;
+        }
       }
 
       return totals;
     },
-    { totalPrice: 0, split: { Marie: 0, Patrick: 0 } }
+    { totalPrice: 0, split }
   );
 }
 
-export function calculateReceiptSetTotals(receipts: Receipt[]): ReceiptTotals {
-  return calculateTotals(receipts.flatMap((receipt) => receipt.items));
+export function calculateReceiptSetTotals(
+  receipts: Receipt[],
+  participants: string[]
+): ReceiptTotals {
+  return calculateTotals(receipts.flatMap((receipt) => receipt.items), participants);
 }

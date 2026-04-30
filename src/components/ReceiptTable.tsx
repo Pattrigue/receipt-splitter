@@ -1,5 +1,5 @@
 import { ReceiptTableRows } from "@/components/ReceiptTableRows";
-import { ActionIcon, Badge, Button, Group, Stack, Table, Tabs, Text } from "@mantine/core";
+import { ActionIcon, Badge, Box, Button, Group, Scroller, Stack, Table, Tabs, Text, Tooltip } from "@mantine/core";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
@@ -65,39 +65,70 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
       ) : (
         <Tabs value={activeReceiptId} onChange={setActiveReceiptId}>
           <Tabs.List>
-            {receipts.map((receipt) => (
-              <Group key={receipt.id} gap={2} wrap="nowrap">
-                <Tabs.Tab value={receipt.id}>
-                  <Group gap={6} wrap="nowrap">
-                    <Text size="sm" truncate="end" maw={160}>
-                      {receipt.name}
-                    </Text>
-                    <Badge size="xs" variant="light">
+            <Scroller>
+              {receipts.map((receipt) => (
+                <Tabs.Tab
+                  key={receipt.id}
+                  value={receipt.id}
+                  styles={{
+                    tab: {
+                      alignItems: "center",
+                      height: 36,
+                    },
+                    tabLabel: {
+                      display: "inline-flex",
+                      alignItems: "center",
+                    },
+                    tabSection: {
+                      display: "inline-flex",
+                      alignItems: "center",
+                    },
+                  }}
+                  leftSection={
+                    <Badge size="xs" style={{ lineHeight: 1 }} variant="light">
                       {receipt.items.length}
                     </Badge>
-                  </Group>
-                </Tabs.Tab>
-                <ActionIcon
-                  aria-label={`Fjern ${receipt.name}`}
-                  color="gray"
-                  onClick={(event) => handleRemoveReceipt(event, receipt.id)}
-                  size="sm"
-                  variant="subtle"
+                  }
+                  rightSection={
+                    <Box
+                      aria-label={`Fjern ${receipt.name}`}
+                      component="span"
+                      onClick={(event) => handleRemoveReceipt(event, receipt.id)}
+                      onMouseDown={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                      }}
+                      style={{
+                        alignItems: "center",
+                        color: "var(--mantine-color-dimmed)",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        height: 16,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <IconX size={12} />
+                    </Box>
+                  }
                 >
-                  <IconX size={12} />
-                </ActionIcon>
-              </Group>
-            ))}
+                  <Text size="sm" truncate="end" maw={160}>
+                    {receipt.name}
+                  </Text>
+                </Tabs.Tab>
+              ))}
 
-            <Button
-              leftSection={<IconPlus size={16} />}
-              ml="auto"
-              onClick={addEmptyReceipt}
-              size="xs"
-              variant="light"
-            >
-              Ny kvittering
-            </Button>
+              <Tooltip label="Ny kvittering">
+                <ActionIcon
+                  aria-label="Ny kvittering"
+                  ml="sm"
+                  onClick={addEmptyReceipt}
+                  size={36}
+                  variant="light"
+                >
+                  <IconPlus size={16} />
+                </ActionIcon>
+              </Tooltip>
+            </Scroller>
           </Tabs.List>
         </Tabs>
       )}

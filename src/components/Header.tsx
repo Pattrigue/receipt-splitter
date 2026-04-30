@@ -1,9 +1,10 @@
-import { Group, Switch, Title } from "@mantine/core";
+import { Burger, Drawer, Group, Stack, Switch, Title } from "@mantine/core";
 import { useReceiptContext } from "@/context/ReceiptContext";
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
 import { JsonReceiptImportButton } from "./JsonReceiptImportButton";
+import { ParticipantSettings } from "@/components/ParticipantSettings";
 import type { Receipt } from "@/types";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface HeaderProps {
   showName: boolean;
@@ -12,9 +13,13 @@ interface HeaderProps {
 
 export function Header({ showName, onShowNameChange }: HeaderProps) {
   const { addReceipts } = useReceiptContext();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleImport = useCallback(
-    (nextReceipts: Receipt[]) => addReceipts(nextReceipts),
+    (nextReceipts: Receipt[]) => {
+      addReceipts(nextReceipts);
+      setMenuOpen(false);
+    },
     [addReceipts]
   );
 
@@ -24,16 +29,44 @@ export function Header({ showName, onShowNameChange }: HeaderProps) {
         <Title order={2}>Kvitteringsdeler 🧾</Title>
       </Group>
 
-      <Group gap="xl" wrap="nowrap">
+      <Group gap="xl" wrap="nowrap" visibleFrom="sm">
         <JsonReceiptImportButton onImport={handleImport} />
+        <ParticipantSettings />
         <Switch
-          visibleFrom="sm"
           checked={showName}
           onChange={(e) => onShowNameChange(e.currentTarget.checked)}
           label="Vis varenavne"
         />
         <ColorSchemeToggle />
       </Group>
+
+      <Burger
+        aria-label="Åbn menu"
+        hiddenFrom="sm"
+        onClick={() => setMenuOpen(true)}
+        opened={menuOpen}
+      />
+
+      <Drawer
+        hiddenFrom="sm"
+        onClose={() => setMenuOpen(false)}
+        opened={menuOpen}
+        position="right"
+        title="Menu"
+      >
+        <Stack gap="md">
+          <JsonReceiptImportButton fullWidth onImport={handleImport} />
+          <ParticipantSettings fullWidth />
+          <Group justify="space-between">
+            <Switch
+              checked={showName}
+              onChange={(e) => onShowNameChange(e.currentTarget.checked)}
+              label="Vis varenavne"
+            />
+            <ColorSchemeToggle />
+          </Group>
+        </Stack>
+      </Drawer>
     </Group>
   );
 }

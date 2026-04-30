@@ -3,6 +3,7 @@ import { Table, NumberInput, NativeSelect, ActionIcon, TextInput } from "@mantin
 import { IconMinus } from "@tabler/icons-react";
 import { useReceiptContext } from "../context/ReceiptContext";
 import { useCallback } from "react";
+import { SHARED_BUYER, SHARED_BUYER_LABEL } from "@/utils/receipt-import";
 
 interface ReceiptTableRowsProps {
   items: ReceiptItem[];
@@ -15,7 +16,7 @@ export function ReceiptTableRows({
   actionColWidth,
   showName
 }: ReceiptTableRowsProps) {
-  const { updateActiveReceipt } = useReceiptContext();
+  const { participants, updateActiveReceipt } = useReceiptContext();
 
   const handleUpdateItem = useCallback(
     (index: number, field: keyof ReceiptItem, value: string | number) => {
@@ -86,12 +87,18 @@ export function ReceiptTableRows({
         <NativeSelect
           size="xs"
           value={item.buyer}
-          data={["Begge", "Marie", "Patrick"]}
+          data={[
+            { value: SHARED_BUYER, label: SHARED_BUYER_LABEL },
+            ...participants.map((participant) => ({
+              value: participant,
+              label: participant,
+            })),
+          ]}
           onChange={(event) =>
             handleUpdateItem(
               index,
               "buyer",
-              event.currentTarget.value || "Begge"
+              event.currentTarget.value || SHARED_BUYER
             )
           }
         />

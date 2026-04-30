@@ -6,9 +6,13 @@ import { useCallback } from "react";
 
 interface JsonReceiptImportButtonProps {
   onImport: (receipts: Receipt[]) => void;
+  fullWidth?: boolean;
 }
 
-export function JsonReceiptImportButton({ onImport }: JsonReceiptImportButtonProps) {
+export function JsonReceiptImportButton({
+  fullWidth,
+  onImport,
+}: JsonReceiptImportButtonProps) {
   const handleImportJson = useCallback(
     async (files: File[]) => {
       try {
@@ -27,7 +31,13 @@ export function JsonReceiptImportButton({ onImport }: JsonReceiptImportButtonPro
       multiple
     >
       {(props) => (
-        <Button {...props} size="xs" variant="light" visibleFrom="sm" leftSection={<IconUpload size={16}/>}>
+        <Button
+          {...props}
+          fullWidth={fullWidth}
+          leftSection={<IconUpload size={16}/>}
+          size="xs"
+          variant="light"
+        >
           Importér JSON
         </Button>
       )}

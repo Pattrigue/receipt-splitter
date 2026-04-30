@@ -1,5 +1,5 @@
 import type { Receipt } from "@/types";
-import { createEmptyReceipt } from "@/utils/receipt-import";
+import { createEmptyReceipt, SHARED_BUYER } from "@/utils/receipt-import";
 
 export type ReceiptState = {
   receipts: Receipt[];
@@ -67,4 +67,31 @@ export function removeReceipt(state: ReceiptState, receiptId: string): ReceiptSt
     receipts,
     activeReceiptId: receipts[Math.min(removedIndex, receipts.length - 1)].id,
   };
+}
+
+export function renameParticipantInReceipts(
+  receipts: Receipt[],
+  previousName: string,
+  nextName: string
+): Receipt[] {
+  if (previousName === nextName) return receipts;
+
+  return receipts.map((receipt) => ({
+    ...receipt,
+    items: receipt.items.map((item) =>
+      item.buyer === previousName ? { ...item, buyer: nextName } : item
+    ),
+  }));
+}
+
+export function removeParticipantFromReceipts(
+  receipts: Receipt[],
+  participant: string
+): Receipt[] {
+  return receipts.map((receipt) => ({
+    ...receipt,
+    items: receipt.items.map((item) =>
+      item.buyer === participant ? { ...item, buyer: SHARED_BUYER } : item
+    ),
+  }));
 }
