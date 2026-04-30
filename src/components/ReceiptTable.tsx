@@ -122,7 +122,8 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
                   aria-label="Ny kvittering"
                   ml="sm"
                   onClick={addEmptyReceipt}
-                  size={36}
+                  size="sm"
+                  style={{ alignSelf: "center", flex: "0 0 auto" }}
                   variant="light"
                 >
                   <IconPlus size={16} />
