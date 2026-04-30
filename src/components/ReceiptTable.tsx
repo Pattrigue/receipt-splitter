@@ -1,7 +1,5 @@
-import { JsonReceiptImportButton } from "@/components/JsonReceiptImportButton";
 import { ReceiptTableRows } from "@/components/ReceiptTableRows";
-import type { ReceiptItem } from "@/types";
-import { ActionIcon, Group, Stack, Table } from "@mantine/core";
+import { ActionIcon, Group, Stack, Table, Tabs, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useCallback } from "react";
 import { useReceiptContext } from "../context/ReceiptContext";
@@ -13,21 +11,44 @@ interface ReceiptTableProps {
 }
 
 export function ReceiptTable({ showName }: ReceiptTableProps) {
-  const { receipt, setReceipt } = useReceiptContext();
+  const {
+    receipts,
+    activeReceipt,
+    activeReceiptId,
+    setActiveReceiptId,
+    updateActiveReceipt,
+  } = useReceiptContext();
 
   const handleAddRow = useCallback(() => {
-    setReceipt((prev) => ({
+    updateActiveReceipt((prev) => ({
       ...prev,
       items: [
         ...prev.items,
         { name: "", price: 0, discount: 0, buyer: "Begge" },
       ],
     }));
-  }, [setReceipt]);
+  }, [updateActiveReceipt]);
 
 
   return (
-    <Stack gap={0}>
+    <Stack gap="sm">
+      <Tabs value={activeReceiptId} onChange={(value) => value && setActiveReceiptId(value)}>
+        <Tabs.List>
+          {receipts.map((receipt) => (
+            <Tabs.Tab key={receipt.id} value={receipt.id}>
+              <Group gap={6} wrap="nowrap">
+                <Text size="sm" truncate="end" maw={160}>
+                  {receipt.name}
+                </Text>
+                <Text size="xs" c="dimmed">
+                  {receipt.items.length}
+                </Text>
+              </Group>
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
+      </Tabs>
+
       <Table horizontalSpacing={6} striped>
         <Table.Thead>
           <Table.Tr>
@@ -48,7 +69,7 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
 
         <Table.Tbody>
           <ReceiptTableRows
-            items={receipt.items}
+            items={activeReceipt.items}
             actionColWidth={ACTION_COL_WIDTH}
             showName={showName}
           />

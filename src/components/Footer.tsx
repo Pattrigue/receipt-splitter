@@ -1,53 +1,54 @@
 import { useReceiptContext } from "@/context/ReceiptContext";
-import { Group, Text } from "@mantine/core";
+import { calculateReceiptSetTotals, calculateTotals } from "@/utils/receipt-import";
+import { Group, Stack, Text } from "@mantine/core";
 import { useMemo } from "react";
 
-type Split = { Marie: number; Patrick: number };
-
 export function Footer() {
-  const { receipt } = useReceiptContext();
+  const { activeReceipt, receipts } = useReceiptContext();
 
-  const { totalPrice, split } = useMemo(() => {
-    let total = 0;
-    const s: Split = { Marie: 0, Patrick: 0 };
-
-    for (const item of receipt.items) {
-      const finalPrice = item.price - item.discount;
-      total += finalPrice;
-
-      switch (item.buyer) {
-        case "Marie":
-          s.Marie += finalPrice;
-          break;
-        case "Patrick":
-          s.Patrick += finalPrice;
-          break;
-        case "Begge":
-          s.Marie += finalPrice / 2;
-          s.Patrick += finalPrice / 2;
-          break;
-      }
-    }
-
-    return { totalPrice: total, split: s };
-  }, [receipt.items]);
-
-  const { Marie, Patrick } = split;
+  const currentTotals = useMemo(
+    () => calculateTotals(activeReceipt.items),
+    [activeReceipt.items]
+  );
+  const allTotals = useMemo(
+    () => calculateReceiptSetTotals(receipts),
+    [receipts]
+  );
 
   return (
-    <Group gap={32} justify="flex-end" h="100%">
-      <div>
-        <Text>Marie</Text>
-        <Text>{`${Marie.toFixed(2).replace(".", ",")} kr.`}</Text>
-      </div>
-      <div>
-        <Text>Patrick</Text>
-        <Text>{`${Patrick.toFixed(2).replace(".", ",")} kr.`}</Text>
-      </div>
-      <div>
-        <Text>Total</Text>
-        <Text>{`${totalPrice.toFixed(2).replace(".", ",")} kr.`}</Text>
-      </div>
+    <Group gap={36} justify="flex-end" h="100%">
+      <TotalGroup label="Aktuel kvittering" totals={currentTotals} />
+      <TotalGroup label="Alle kvitteringer" totals={allTotals} />
     </Group>
+  );
+}
+
+type Totals = ReturnType<typeof calculateTotals>;
+
+function formatCurrency(value: number) {
+  return `${value.toFixed(2).replace(".", ",")} kr.`;
+}
+
+function TotalGroup({ label, totals }: { label: string; totals: Totals }) {
+  return (
+    <Stack gap={2}>
+      <Text size="xs" c="dimmed" fw={600}>
+        {label}
+      </Text>
+      <Group gap={18}>
+        <div>
+          <Text size="xs">Marie</Text>
+          <Text size="sm">{formatCurrency(totals.split.Marie)}</Text>
+        </div>
+        <div>
+          <Text size="xs">Patrick</Text>
+          <Text size="sm">{formatCurrency(totals.split.Patrick)}</Text>
+        </div>
+        <div>
+          <Text size="xs">Total</Text>
+          <Text size="sm">{formatCurrency(totals.totalPrice)}</Text>
+        </div>
+      </Group>
+    </Stack>
   );
 }

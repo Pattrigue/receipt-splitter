@@ -5,20 +5,20 @@ import { GlobalJsonDropzone } from "@/components/GlobalJsonDropzone";
 import { Header } from "@/components/Header";
 import { useReceiptContext } from "@/context/ReceiptContext";
 import { ReceiptTable } from "@/components/ReceiptTable";
-import type { ReceiptItem } from "@/types";
+import type { Receipt } from "@/types";
 
 export function App() {
-  const { setReceipt } = useReceiptContext();
+  const { replaceReceipts } = useReceiptContext();
   const [showName, setShowName] = useState(true);
 
-  const handleImportItems = useCallback(
-    (items: ReceiptItem[]) => setReceipt({ items }),
-    [setReceipt]
+  const handleImportReceipts = useCallback(
+    (receipts: Receipt[]) => replaceReceipts(receipts),
+    [replaceReceipts]
   );
 
   return (
     <>
-      <GlobalJsonDropzone onImportItems={handleImportItems} />
+      <GlobalJsonDropzone onImportReceipts={handleImportReceipts} />
 
       <AppShell header={{ height: 60 }} footer={{ height: 80 }} padding="md">
         <AppShell.Header>

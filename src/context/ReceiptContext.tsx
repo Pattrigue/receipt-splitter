@@ -1,17 +1,21 @@
 import { createSafeContext } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
 import type { Receipt } from "@/types";
+import { createEmptyReceipt } from "@/utils/receipt-import";
 
-const ITEMS_INITIAL_COUNT = 20;
+type UpdateActiveReceipt = (value: Receipt | ((prev: Receipt) => Receipt)) => void;
 
-type SetReceipt = (value: Receipt | ((prev: Receipt) => Receipt)) => void;
+const initialReceipt = createEmptyReceipt();
 
 type ReceiptContextValue = {
-  receipt: Receipt;
+  receipts: Receipt[];
+  activeReceiptId: string;
+  activeReceipt: Receipt;
   itemCount: number;
-  setReceipt: SetReceipt;
-  onReceiptChange: (receipt: Receipt) => void;
+  setActiveReceiptId: (id: string) => void;
+  replaceReceipts: (receipts: Receipt[]) => void;
+  updateActiveReceipt: UpdateActiveReceipt;
 };
 
 const [ReceiptContextProvider, useReceiptContext] =
@@ -20,25 +24,50 @@ const [ReceiptContextProvider, useReceiptContext] =
   );
 
 export function ReceiptProvider({ children }: PropsWithChildren) {
-  const [receipt, setReceipt] = useState<Receipt>({
-    items: Array.from({ length: ITEMS_INITIAL_COUNT }, () => ({
-      name: "",
-      price: 0,
-      discount: 0,
-      buyer: "Begge",
-    })),
-  });
+  const [receipts, setReceipts] = useState<Receipt[]>([initialReceipt]);
+  const [activeReceiptId, setActiveReceiptId] = useState<string>(initialReceipt.id);
 
-  const [itemCount, setItemCount] = useState<number>(1);
+  const activeReceipt = useMemo(
+    () => receipts.find((receipt) => receipt.id === activeReceiptId) ?? receipts[0] ?? initialReceipt,
+    [activeReceiptId, receipts]
+  );
 
-  const onReceiptChange = useCallback((receipt: Receipt) => {
-    setItemCount(receipt.items.length);
+  const replaceReceipts = useCallback((nextReceipts: Receipt[]) => {
+    const normalizedReceipts = nextReceipts.length > 0 ? nextReceipts : [createEmptyReceipt()];
+    setReceipts(normalizedReceipts);
+    setActiveReceiptId(normalizedReceipts[0].id);
   }, []);
 
+  const updateActiveReceipt = useCallback<UpdateActiveReceipt>((value) => {
+    setReceipts((prevReceipts) =>
+      prevReceipts.map((receipt) => {
+        if (receipt.id !== activeReceiptId) return receipt;
+        return typeof value === "function" ? value(receipt) : value;
+      })
+    );
+  }, [activeReceiptId]);
+
+  const itemCount = activeReceipt?.items.length ?? 0;
+
+  const value = useMemo(() => ({
+    receipts,
+    activeReceiptId,
+    activeReceipt,
+    itemCount,
+    setActiveReceiptId,
+    replaceReceipts,
+    updateActiveReceipt,
+  }), [
+    receipts,
+    activeReceiptId,
+    activeReceipt,
+    itemCount,
+    replaceReceipts,
+    updateActiveReceipt,
+  ]);
+
   return (
-    <ReceiptContextProvider
-      value={{ receipt, itemCount, setReceipt, onReceiptChange }}
-    >
+    <ReceiptContextProvider value={value}>
       {children}
     </ReceiptContextProvider>
   );

@@ -1,33 +1,28 @@
-import type { ReceiptItem } from "@/types";
-import { type ImportedReceipt, mapImportedReceiptToItems } from "@/utils/receipt-import";
+import type { Receipt } from "@/types";
+import { importReceiptFiles } from "@/utils/receipt-import";
 import { Text, Stack } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { useCallback } from "react";
 
 interface GlobalJsonDropzoneProps {
-  onImportItems: (items: ReceiptItem[]) => void;
+  onImportReceipts: (receipts: Receipt[]) => void;
 }
 
-export function GlobalJsonDropzone({ onImportItems }: GlobalJsonDropzoneProps) {
+export function GlobalJsonDropzone({ onImportReceipts }: GlobalJsonDropzoneProps) {
   const handleDrop = useCallback(
     async (files: File[]) => {
-      const file = files[0];
-      if (!file) return;
+      if (files.length === 0) return;
 
-      const text = await file.text();
-      const parsed = JSON.parse(text) as ImportedReceipt;
-
-      onImportItems(mapImportedReceiptToItems(parsed));
+      onImportReceipts(await importReceiptFiles(files));
     },
-    [onImportItems]
+    [onImportReceipts]
   );
 
   return (
     <Dropzone.FullScreen
       active
       activateOnClick={false}
-      multiple={false}
-      maxFiles={1}
+      multiple
       accept={{ "application/json": [".json"] }}
       onDrop={(files) => {
         handleDrop(files).catch(() => alert("Failed to import JSON file."));
@@ -36,7 +31,7 @@ export function GlobalJsonDropzone({ onImportItems }: GlobalJsonDropzoneProps) {
       <Stack align="center" justify="center" mih={220} style={{ pointerEvents: "none" }}>
         <Dropzone.Accept>
           <Text fw={600} size="xl">
-            Drop JSON to import
+            Drop JSON files to import
           </Text>
         </Dropzone.Accept>
         <Dropzone.Reject>
@@ -46,7 +41,7 @@ export function GlobalJsonDropzone({ onImportItems }: GlobalJsonDropzoneProps) {
         </Dropzone.Reject>
         <Dropzone.Idle>
           <Text fw={600} size="xl">
-            Drop JSON to import
+            Drop JSON files to import
           </Text>
         </Dropzone.Idle>
       </Stack>

@@ -15,42 +15,36 @@ export function ReceiptTableRows({
   actionColWidth,
   showName
 }: ReceiptTableRowsProps) {
-  const { setReceipt, onReceiptChange } = useReceiptContext();
+  const { updateActiveReceipt } = useReceiptContext();
 
   const handleUpdateItem = useCallback(
     (index: number, field: keyof ReceiptItem, value: string | number) => {
-      setReceipt((prevReceipt) => {
+      updateActiveReceipt((prevReceipt) => {
         const updatedItems = [...prevReceipt.items];
         updatedItems[index] = {
           ...updatedItems[index],
           [field]: value,
         };
 
-        const updatedReceipt = {
+        return {
           ...prevReceipt,
           items: updatedItems,
         };
-        onReceiptChange?.(updatedReceipt);
-
-        return updatedReceipt;
       });
     },
-    [setReceipt, onReceiptChange]
+    [updateActiveReceipt]
   );
 
   const handleRemoveRow = useCallback(
     (index: number) => {
-      setReceipt((prevReceipt) => {
-        const updatedReceipt = {
+      updateActiveReceipt((prevReceipt) => {
+        return {
           ...prevReceipt,
           items: prevReceipt.items.filter((_, i) => i !== index),
         };
-        onReceiptChange?.(updatedReceipt);
-
-        return updatedReceipt;
       });
     },
-    [setReceipt, onReceiptChange]
+    [updateActiveReceipt]
   );
 
   const rows = items.map((item, index) => (

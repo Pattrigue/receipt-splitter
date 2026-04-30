@@ -2,7 +2,7 @@ import { Group, Switch, Title } from "@mantine/core";
 import { useReceiptContext } from "@/context/ReceiptContext";
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle";
 import { JsonReceiptImportButton } from "./JsonReceiptImportButton";
-import type { ReceiptItem } from "@/types";
+import type { Receipt } from "@/types";
 import { useCallback } from "react";
 
 interface HeaderProps {
@@ -11,18 +11,18 @@ interface HeaderProps {
 }
 
 export function Header({ showName, onShowNameChange }: HeaderProps) {
-  const { setReceipt, itemCount } = useReceiptContext();
+  const { replaceReceipts, itemCount, receipts } = useReceiptContext();
 
   const handleImport = useCallback(
-    (items: ReceiptItem[]) => setReceipt({ items }),
-    [setReceipt]
+    (nextReceipts: Receipt[]) => replaceReceipts(nextReceipts),
+    [replaceReceipts]
   );
 
   return (
     <Group justify="space-between" h="100%" px="md">
       <Group gap="sm">
         <Title order={2}>Receipt Splitter</Title>
-        <Title order={5}>({itemCount})</Title>
+        <Title order={5}>({receipts.length} / {itemCount})</Title>
       </Group>
 
       <Group gap="xl" wrap="nowrap">

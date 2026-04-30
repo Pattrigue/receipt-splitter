@@ -1,4 +1,7 @@
 export interface Receipt {
+  id: string;
+  name: string;
+  sourceFileName?: string;
   items: ReceiptItem[];
 }
 
