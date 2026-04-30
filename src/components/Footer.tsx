@@ -1,10 +1,11 @@
 import { useReceiptContext } from "@/context/ReceiptContext";
 import { calculateReceiptSetTotals, calculateTotals } from "@/utils/receipt-import";
-import { Badge, Group, Stack, Text } from "@mantine/core";
-import { useMemo } from "react";
+import { Badge, Group, Stack, Tabs, Text } from "@mantine/core";
+import { useMemo, useState } from "react";
 
 export function Footer() {
   const { activeReceipt, participants, receipts } = useReceiptContext();
+  const [mobileTab, setMobileTab] = useState<"current" | "all">("current");
 
   const currentTotals = useMemo(
     () => calculateTotals(activeReceipt?.items ?? [], participants),
@@ -21,10 +22,20 @@ export function Footer() {
         <DesktopTotalGroup label="Aktuel kvittering" totals={currentTotals} />
         <DesktopTotalGroup label="Alle kvitteringer" totals={allTotals} />
       </Group>
-      <Stack gap={8} hiddenFrom="sm" justify="center" mah="100%" style={{ overflowY: "auto" }}>
-        <MobileTotalGroup label="Aktuel" totals={currentTotals} />
-        <MobileTotalGroup label="Alle" totals={allTotals} />
-      </Stack>
+      <Tabs hiddenFrom="sm" value={mobileTab} onChange={(value) => setMobileTab((value as "current" | "all") ?? "current")}>
+        <Tabs.List grow>
+          <Tabs.Tab value="current">Aktuel</Tabs.Tab>
+          <Tabs.Tab value="all">Alle</Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="current" pt="sm">
+          <MobileTotalGroup label="Aktuel kvittering" totals={currentTotals} />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="all" pt="sm">
+          <MobileTotalGroup label="Alle kvitteringer" totals={allTotals} />
+        </Tabs.Panel>
+      </Tabs>
     </>
   );
 }
@@ -67,16 +78,16 @@ function MobileTotalGroup({ label, totals }: { label: string; totals: Totals }) 
   const splitEntries = Object.entries(totals.split);
 
   return (
-    <Stack gap={4}>
-      <Group justify="space-between" wrap="nowrap">
-        <Text size="xs" c="dimmed" fw={600}>
+    <Stack gap={6}>
+      <Group justify="space-between" wrap="nowrap" gap="sm">
+        <Text size="xs" c="dimmed" fw={600} style={{ whiteSpace: "nowrap" }}>
           {label}
         </Text>
-        <Text size="sm" fw={600}>
+        <Text size="sm" fw={600} style={{ whiteSpace: "nowrap" }}>
           {formatCurrency(totals.totalPrice)}
         </Text>
       </Group>
-      <Group gap={6}>
+      <Group gap={6} wrap="nowrap" style={{ overflowX: "auto" }}>
         {splitEntries.length === 0 ? (
           <Text c="dimmed" size="xs">
             Ingen personer
