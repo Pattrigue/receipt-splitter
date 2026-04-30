@@ -1,5 +1,5 @@
 import { ReceiptTableRows } from "@/components/ReceiptTableRows";
-import { ActionIcon, Badge, Box, Button, Group, Scroller, Stack, Table, Tabs, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Badge, Button, Group, Scroller, Stack, Table, Tabs, Text, Tooltip } from "@mantine/core";
 import { IconPlus, IconX } from "@tabler/icons-react";
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
@@ -36,6 +36,7 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
 
   const handleRemoveReceipt = useCallback(
     (event: MouseEvent, receiptId: string) => {
+      event.preventDefault();
       event.stopPropagation();
       removeReceipt(receiptId);
     },
@@ -70,45 +71,26 @@ export function ReceiptTable({ showName }: ReceiptTableProps) {
                 <Tabs.Tab
                   key={receipt.id}
                   value={receipt.id}
-                  styles={{
-                    tab: {
-                      alignItems: "center",
-                      height: 36,
-                    },
-                    tabLabel: {
-                      display: "inline-flex",
-                      alignItems: "center",
-                    },
-                    tabSection: {
-                      display: "inline-flex",
-                      alignItems: "center",
-                    },
-                  }}
                   leftSection={
-                    <Badge size="xs" style={{ lineHeight: 1 }} variant="light">
+                    <Badge size="xs" variant="light">
                       {receipt.items.length}
                     </Badge>
                   }
                   rightSection={
-                    <Box
+                    <ActionIcon
                       aria-label={`Fjern ${receipt.name}`}
+                      color="gray"
                       component="span"
                       onClick={(event) => handleRemoveReceipt(event, receipt.id)}
                       onMouseDown={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
                       }}
-                      style={{
-                        alignItems: "center",
-                        color: "var(--mantine-color-dimmed)",
-                        cursor: "pointer",
-                        display: "inline-flex",
-                        height: 16,
-                        justifyContent: "center",
-                      }}
+                      size="xs"
+                      variant="subtle"
                     >
                       <IconX size={12} />
-                    </Box>
+                    </ActionIcon>
                   }
                 >
                   <Text size="sm" truncate="end" maw={160}>
